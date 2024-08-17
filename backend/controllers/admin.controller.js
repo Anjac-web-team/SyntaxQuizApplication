@@ -2,6 +2,33 @@ import Admin from "../models/admin.model.js";
 import bcrypt from 'bcrypt';
 import generateTokenAndSendCookie from "../utils/generateTokenAndSendCookie.js";
 
+export const isAdminLoggedIn = async (req, res, next) => {
+    try {
+        console.log(req.admin)
+        const { username, role } = req.admin.user;
+        if (role != "admin") {
+            return res.status(400).json({ message: "Access denied" });
+        }
+        const admin = await Admin.findOne({ username });
+
+        if (!admin) {
+            return res.status(400).json({ message: "Admin not found" });
+        }
+
+        const payload = {
+            id: admin._id,
+            username: admin.username,
+            role: 'admin'
+        }
+        generateTokenAndSendCookie(payload, res);
+        res.status(200).json({ message: "Admin logged in Successfully" })
+
+    } catch (err) {
+        console.log(`Error in Admin Login : ${err}`);
+        res.status(400).json({ error: "Internal Server Error." })
+    }
+}
+
 export const adminSignup = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -15,7 +42,7 @@ export const adminSignup = async (req, res) => {
 
         const newAdmin = new Admin({
             username,
-            password:hashPassword
+            password: hashPassword
         });
 
         if (newAdmin) {
@@ -50,8 +77,13 @@ export const adminLogin = async (req, res) => {
             username: admin.username,
             role: 'admin'
         }
-        generateTokenAndSendCookie(payload,res);
-        res.status(200).json({ message: "Admin logged in Successfully" })
+        const token = generateTokenAndSendCookie(payload);
+        res.cookie("User", token, {
+            expires:new Date(Date.now()+ 2 * 60 * 60 * 1000),
+            httpOnly: true,
+            sameSite: "none",
+            secure: true
+        }).status(200).json({ message: "Admin logged in Successfully" })
 
     } catch (err) {
         console.log(`Error in Admin Login : ${err}`);
@@ -62,8 +94,7 @@ export const adminLogin = async (req, res) => {
 
 export const adminLogout = async (req, res) => {
     try {
-        res.cookie("User","",{maxAge: 0});
-        res.status(200).json({message:"Logged out successfully"})
+        res.clearCookie("User").json({ message: "Logged out successfully" })
     } catch (error) {
         res.status(400).json({ error: "Internal Server Error" });
         console.log("Error in admin logout controller", error.message);

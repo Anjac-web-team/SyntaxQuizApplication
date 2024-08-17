@@ -7,11 +7,10 @@ export const AuthSlice=createSlice({
         user:null
     },
     reducers:{
-        setAdminAuthState:(state,action)=>{
+        setAdminAuthState:(state)=>{
             return{
                 ...state,
                 isAdmin:true,
-                user:action.payload
             }
         },
         setAuthState:(state,action)=>{

@@ -1,9 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
+import {message} from 'antd'
+import { useDispatch } from "react-redux";
+import {useNavigate} from 'react-router-dom'
+import {loginAdmin,isAdminLoggedIn} from '../actions/adminActions'
+
 
 function Home() {
+    const[messageApi,ContextHolder]=message.useMessage()
+    const dispatch=useDispatch()
+    const navigate=useNavigate()
+    const handleAdminLogin=()=>{
+        let username=prompt("Enter your username : ")
+        let password=prompt("Enter your password : ")
+        if(username!=""&&password!="")
+            loginAdmin(dispatch,navigate,{username,password})
+        else
+            message.warning("Please provide username and password")
+    }
+    useEffect(()=>{
+        isAdminLoggedIn(dispatch,navigate)
+    },[])
     return (
         <div className="w-100 h-[100%] bg-[#151515] md:flex px-5 md:px-10 py-5">
-            <p className="absolute text-[#facc15] left-[50%] translate-x-[-50%] text-xs font-inter font-medium">🤘 Chin Dabak Tam Tam 🤘</p>
+            {ContextHolder}
+            <p className="absolute text-[#facc15] left-[50%] translate-x-[-50%] text-xs font-inter font-medium select-none" onDoubleClick={handleAdminLogin}>🤘 Chin Dabak Tam Tam 🤘</p>
             <div className="md:w-[50%] w-[100%] md:h-[100%] h-[auto] flex flex-col justify-center py-10">
                 <h1 className="text-6xl md:text-8xl font-primary text-[#0284c7] ">Syntax Cracker .</h1>
                 <p className="text-xl text-[#65a30d] font-inter font-medium">Unlease The Power of Code !</p>
