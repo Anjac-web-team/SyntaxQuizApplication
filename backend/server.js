@@ -15,7 +15,7 @@ dotenv.config();
 const app = express();
 app.use(cors({ credentials: true, origin: process.env.FRONTEND_URL }));
 app.use(cookieParser())
-app.use(express.json())
+app.use(express.json({limit:"50mb"}))
 
 app.use("/api/auth", userRoutes)
 

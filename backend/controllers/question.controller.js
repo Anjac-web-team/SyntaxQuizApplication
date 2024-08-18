@@ -4,8 +4,8 @@ import { updateUser } from "./user.controller.js";
 
 export const addQuestion = async (req, res) => {
     try {
-        const { levelNo, question, answers } = req.body;
-        if (!levelNo || !question || !answers) {
+        const { levelNo, question, answers,output,description } = req.body;
+        if (!levelNo || !question || !answers||!output) {
             return res.status(400).json({ message: "Please fill in all fields." });
         }
 
@@ -17,7 +17,9 @@ export const addQuestion = async (req, res) => {
         const newQuestion = new Questions({
             levelNo,
             question,
-            answers
+            answers,
+            output,
+            description
         });
 
         if (newQuestion) {
@@ -52,7 +54,7 @@ export const getAllQuestions = async (req, res) => {
     try {
         const questions = await Questions.find({}).sort({ levelNo: 1 });
         if (questions.length > 0) {
-            return res.status(200).json(questions);
+            return res.status(200).json({questions,message:"Questions fetched"});
         } else {
             return res.status(400).json({ message: "No questions Found" });
         }

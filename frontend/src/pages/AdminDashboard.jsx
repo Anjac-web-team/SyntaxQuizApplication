@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { message, Tabs } from 'antd'
 import { useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom'
+import AddQuestion from "./Admin/AddQuestion";
+import ManageQuestion from "./Admin/ManageQuestion";
 import { logoutAdmin } from "../actions/adminActions";
 import { IoLogOut } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
@@ -12,13 +14,14 @@ import { TbSettings2 } from "react-icons/tb";
 import { PiCertificate } from "react-icons/pi";
 function AdminDashboard() {
     const [messageApi, ContextHolder] = message.useMessage()
+    const[active,setActive]=useState("1")
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const handleLogout = () => {
         logoutAdmin(dispatch, navigate)
     }
     const onTabChange=(key)=>{
-        console.log(key)
+        setActive(key)
     }
     const tabItems = [
         {
@@ -30,13 +33,13 @@ function AdminDashboard() {
         {
             key: "2",
             label: "Add Question",
-            children: <h1>Add</h1>,
+            children: <AddQuestion setKey={setActive}/>,
             icon:<AiFillFileAdd/>
         },
         {
             key: "3",
             label: "Manage Question",
-            children: <h1>Manage</h1>,
+            children: <ManageQuestion/>,
             icon:<MdManageHistory/>
         },
         {
@@ -70,7 +73,7 @@ function AdminDashboard() {
                 </div>
             </div>
             <div className="w-full px-5 mt-5">
-                <Tabs defaultActiveKey="1" items={tabItems} onChange={onTabChange} />
+                <Tabs activeKey={active} items={tabItems} onChange={onTabChange} />
             </div>
         </div>
     )
