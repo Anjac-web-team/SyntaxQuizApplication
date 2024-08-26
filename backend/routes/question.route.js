@@ -4,7 +4,7 @@ import { addQuestion, deleteAllQuestions, deleteQuestionByLevelNo, evaluateQuest
 
 const router = express.Router();
 
-router.get("/getquestion", protectRoute, getQuestionByLevelNo);
+router.get("/getquestion", getQuestionByLevelNo);
 
 router.get("/get-all-questions", protectRoute, getAllQuestions);
 

@@ -4,6 +4,7 @@ import connectToMongoDB from './db/connectToMongoDB.js';
 import userRoutes from './routes/user.route.js';
 import questionRoutes from './routes/question.route.js';
 import adminRoutes from './routes/admin.route.js';
+import settingsRoutes from './routes/settings.route.js'
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
 
@@ -24,6 +25,8 @@ app.use("/api/questions", questionRoutes)
 
 
 app.use("/api/admin", adminRoutes)
+
+app.use('/api/settings',settingsRoutes)
 
 
 app.get("/", (req, res) => {

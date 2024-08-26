@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true,
+        uppercase:true
     },
     section: {
         type: String,
@@ -18,16 +19,17 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 1,
     },
-    submitTime: {
-        type: String,
-        default: Date.now,
-
+    createdAt: {
+        type: Number
     },
     score: {
         type: Number,
         default: 0,
+    },
+    updatedAt:{
+        type:Number
     }
-},{timestamps:true});
+});
 
 const User = mongoose.model("User",userSchema);
 export default User;

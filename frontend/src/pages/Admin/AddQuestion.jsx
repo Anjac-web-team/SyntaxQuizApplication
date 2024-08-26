@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Input, Button, Drawer, Space, Form, message, Divider, Image } from 'antd'
+import {useDispatch} from 'react-redux'
 import QuestionView from "../components/QuestionView";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
@@ -11,6 +12,9 @@ import { addQuestion } from "../../actions/questionActions";
 const { TextArea } = Input
 
 function AddQuestion({ setKey }) {
+
+    const dispatch=useDispatch()
+
     const [level, setLevel] = useState("")
     const [description, setDescription] = useState("")
     const [output, setOutput] = useState("")
@@ -48,7 +52,7 @@ function AddQuestion({ setKey }) {
     const handleSubmit = () => {
         if (level != "" && question != "" && answer != {} && output != "") {
             const data = { levelNo: level, question, answers: answer, description, output }
-            const res = addQuestion(data)
+            const res = addQuestion(dispatch,data)
             if (res) {
                 handleReset()
                 setKey("1")

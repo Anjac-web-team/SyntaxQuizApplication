@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { message, Tabs } from 'antd'
 import { useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom'
 import AddQuestion from "./Admin/AddQuestion";
 import ManageQuestion from "./Admin/ManageQuestion";
+import Settings from "./Admin/Settings";
+import Dashboard from "./Admin/Dashboard";
+import LeaderBoard from "./Admin/LeaderBoard";
 import { logoutAdmin } from "../actions/adminActions";
+import { getQuestions } from "../actions/questionActions";
+import { getGameStatus } from "../actions/settingsActions";
+import {getAllUsers} from '../actions/userActions'
 import { IoLogOut } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
 import { AiFillFileAdd } from "react-icons/ai";
@@ -14,9 +20,17 @@ import { TbSettings2 } from "react-icons/tb";
 import { PiCertificate } from "react-icons/pi";
 function AdminDashboard() {
     const [messageApi, ContextHolder] = message.useMessage()
-    const[active,setActive]=useState("1")
+    const[active,setActive]=useState("6")
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    async function fetchData(){
+        await getQuestions(dispatch)
+        await getGameStatus(dispatch)
+        await getAllUsers(dispatch)
+    }
+    useEffect(()=>{
+        fetchData()
+    },[])
     const handleLogout = () => {
         logoutAdmin(dispatch, navigate)
     }
@@ -27,7 +41,7 @@ function AdminDashboard() {
         {
             key: "1",
             label: "Dashboard",
-            children: <h1>dASH</h1>,
+            children: <Dashboard/>,
             icon:<MdDashboard/>
         },
         {
@@ -39,13 +53,13 @@ function AdminDashboard() {
         {
             key: "3",
             label: "Manage Question",
-            children: <ManageQuestion/>,
+            children: <ManageQuestion key={active}/>,
             icon:<MdManageHistory/>
         },
         {
             key: "4",
             label: "Leaderboard",
-            children: <h1>Leaderboard</h1>,
+            children: <LeaderBoard/>,
             icon:<MdLeaderboard/>
         },
         {
@@ -57,7 +71,7 @@ function AdminDashboard() {
         {
             key: "6",
             label: "Settings",
-            children: <h1>Settings</h1>,
+            children: <Settings/>,
             icon:<TbSettings2/>
         }
     ]

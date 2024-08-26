@@ -4,38 +4,30 @@ export const GameSlice=createSlice({
     name:"game",
     initialState:{
         isStart:false,
-        isEnd:false,
-        message:""
+        timer:"",
     },
     reducers:{
-        setEventSuccessState:(state)=>{
+        setEventStatusState:(state,action)=>{
             return{
                 ...state,
-                isStart:true
+                isStart:action.payload
             }
         },
-        setEventFailureState:(state,action)=>{
+        setEventTimerState:(state,action)=>{
             return{
                 ...state,
-                isStart:false,
-                message:action.payload
-            }
-        },
-        setEventEndState:(state)=>{
-            return{
-                ...state,
-                isEnd:true
+                timer:action.payload
             }
         },
         setEventResetState:(state)=>{
             return{
                 ...state,
                 isStart:false,
-                message:""
+                timer:""
             }
         }
     }
 })
 
 export default GameSlice.reducer
-export const{setEventFailureState,setEventResetState,setEventSuccessState,setEventEndState}=GameSlice.actions
+export const{setEventResetState,setEventStatusState,setEventTimerState}=GameSlice.actions

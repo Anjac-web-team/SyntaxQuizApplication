@@ -5,8 +5,8 @@ function QuestionView({ question, setAnswers,answers,output }) {
     const [ques, setQues] = useState([]);
     let ansId = 1;
     useEffect(() => {
-        let lines = question.split("\\n");
-        let final = lines.map((line) => {
+        let lines = question?.split("\\n");
+        let final = lines?.map((line) => {
             return line.split("$#$");
         });
         setQues(final);
@@ -14,10 +14,10 @@ function QuestionView({ question, setAnswers,answers,output }) {
     return (
         <div className="w-full py-5 flex flex-wrap">
             <div className="sm:w-1/2 w-full sm:border-e">
-                {ques.map((lines, i) => {
+                {ques?.map((lines, i) => {
                     return (
                         <div style={{ margin: "8px auto" }} key={i}>
-                            {lines.map((piece, j) => {
+                            {lines?.map((piece, j) => {
                                 return (
                                     <span style={{ width: "auto" }} key={j}>
                                         {piece.startsWith("#s") ? (
@@ -29,6 +29,7 @@ function QuestionView({ question, setAnswers,answers,output }) {
                                                 }}
                                                 type="text"
                                                 name={`${ansId++}`}
+                                                defaultValue={""}
                                                 onChange={(e) => {
                                                     let ans = { ...answers };
                                                     ans[e.currentTarget.name] = e.target.value.trim();
