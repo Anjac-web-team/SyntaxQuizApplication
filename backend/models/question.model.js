@@ -6,6 +6,9 @@ const questionSchema = new mongoose.Schema({
         required:true,
         unique:true,
     },
+    description:{
+        type:String
+    },
     question:{
         type:String,
         required:true,
@@ -14,6 +17,10 @@ const questionSchema = new mongoose.Schema({
         type:Object,
         required:true,
     },
+    output:{
+        type:String,
+        required:true
+    }
 });
 
 const Questions = mongoose.model("Questions",questionSchema);

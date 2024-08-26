@@ -4,8 +4,8 @@ import { updateUser } from "./user.controller.js";
 
 export const addQuestion = async (req, res) => {
     try {
-        const { levelNo, question, answers } = req.body;
-        if (!levelNo || !question || !answers) {
+        const { levelNo, question, answers,output,description } = req.body;
+        if (!levelNo || !question || !answers||!output) {
             return res.status(400).json({ message: "Please fill in all fields." });
         }
 
@@ -17,7 +17,9 @@ export const addQuestion = async (req, res) => {
         const newQuestion = new Questions({
             levelNo,
             question,
-            answers
+            answers,
+            output,
+            description
         });
 
         if (newQuestion) {
@@ -34,13 +36,15 @@ export const addQuestion = async (req, res) => {
 
 export const getQuestionByLevelNo = async (req, res) => {
     try {
-        const levelNo = req.query.id;
-        const question = await Questions.findOne({ levelNo });
-        if (!question) {
-            return res.status(404).json({ message: "Question not found for this level." });
+        const level = req.query.id;
+        let fetchedQuestion = await Questions.findOne({ levelNo:level })
+        const questions=await Questions.find()
+        if (!fetchedQuestion) {
+            return res.status(200).json({ message: "Question not found for this level.",noOfLevels:questions.length,question:{} });
         }
-
-        return res.status(200).json(question);
+        const{id,levelNo,question,description,output,answers}=fetchedQuestion
+        let questionWithoutAns={id,levelNo,question,description,output,points:Object.values(answers).length}
+        res.status(200).json({question:questionWithoutAns,noOfLevels:questions.length});
 
     } catch (error) {
         console.error(`Error in getQuestionByLevelNo : ${error}`);
@@ -52,7 +56,7 @@ export const getAllQuestions = async (req, res) => {
     try {
         const questions = await Questions.find({}).sort({ levelNo: 1 });
         if (questions.length > 0) {
-            return res.status(200).json(questions);
+            return res.status(200).json({questions,message:"Questions fetched"});
         } else {
             return res.status(400).json({ message: "No questions Found" });
         }
@@ -65,7 +69,6 @@ export const getAllQuestions = async (req, res) => {
 export const deleteQuestionByLevelNo = async (req, res) => {
     try {
         const levelNo = req.query.id;
-        console.log(levelNo);
         const question = await Questions.deleteOne({ levelNo });
         if (!question) {
             return res.status(404).json({ message: "Question not found for this level." });
@@ -94,19 +97,27 @@ export const deleteAllQuestions = async (req, res) => {
 };
 
 export const evaluateQuestion = async (req, res) => {
+    const{levelNo,answers,updatedAt}=req.body;
     try {
-
         const token = req.cookies.User;
         if (!token) {
             return res.status(400).json({ error: "No such user found" })
         }
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        
-        console.log(decoded);
+        const givenAnswers=Object.values(answers)
+        console.log(answers);
+        const fetchedQuestion=await Questions.findOne({levelNo})
+        const fetchedAnswer=Object.values(fetchedQuestion?.answers)
+        let point=0
+        for(let i=0;i<givenAnswers.length;++i){
+            if(givenAnswers[i]==fetchedAnswer[i])
+                point=point+1
+        }
+        if(fetchedAnswer.length!=point)
+            return res.status(400).json({ error: "Invalid Answers" })
         decoded.user.levelNo = decoded.user.levelNo + 1;
-        decoded.user.score = decoded.user.score + 1;
-        decoded.user.submitTime = getCurrentTime();
-        
+        decoded.user.score = decoded.user.score + point;
+        decoded.user.updatedAt =updatedAt;
         updateUser(decoded.user,res);
 
     } catch (error) {
